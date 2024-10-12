@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (!session_start()){
+    session_start();
+}
+
 require 'config.php';
 
 if (!isset($_SESSION['user_id'])) {

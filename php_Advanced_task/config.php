@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';  // Update this if your database is hosted elsewhere
-$db = 'user_auth';    // Name of your database
-$user = 'root';       // Database username
-$pass = '';           // Database password
+$host = 'localhost';
+$db = 'user_auth';
+$user = 'root';
+$pass = '';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

@@ -26,9 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if the user is an admin or a regular user
         if ($user['role'] === 'admin') {
             $_SESSION['is_admin'] = true;
-            header('Location: admin_dashboard.php'); // Redirect to admin dashboard
+            header('Location: admin_dashboard.php');
         } else {
-            header('Location: welcome.php'); // Redirect to user welcome page
+            header('Location: welcome.php');
         }
         exit;
     } else {
@@ -82,4 +82,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="js/main.js"></script>
     <!-- Include SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/s
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Display error message using SweetAlert2 if there is an error
+        <?php if ($error_message): ?>
+            Swal.fire({
+                title: 'Error!',
+                text: '<?= htmlspecialchars($error_message); ?>',
+                icon: 'error'
+            });
+        <?php endif; ?>
+    </script>
+</body>
+
+</html>

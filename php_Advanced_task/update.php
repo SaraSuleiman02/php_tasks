@@ -14,7 +14,7 @@ $user_id = $_SESSION['user_id']; // The logged-in user's ID
 
 // For admins, allow updating any user via the URL parameter 'id'
 if ($is_admin && isset($_GET['id'])) {
-    $user_id = $_GET['id']; // Admin wants to edit another user's info
+    $user_id = $_GET['id'];
 }
 
 // Fetch the user's data based on the ID (either the logged-in user or a selected user by the admin)
@@ -23,29 +23,28 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute(['id' => $user_id]);
 $user = $stmt->fetch();
 
-// If the user doesn't exist, redirect back to the appropriate page
+// If the user doesn't exist
 if (!$user) {
     if ($is_admin) {
         header('Location: admin_dashboard.php');
     } else {
-        header('Location: home.php'); // For regular users
+        header('Location: home.php');
     }
     exit;
 }
 
-// Handle the form submission to update user info
+// Get updated user info
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $mobile = $_POST['mobile'];
-    $dob = $_POST['dob'];  // Date of birth as a single value (YYYY-MM-DD)
+    $dob = $_POST['dob'];
 
     // Update user data
     $sql = "UPDATE users SET name = :name, email = :email, mobile = :mobile, date_of_birth = :date_of_birth 
             WHERE id = :id";
     $stmt = $pdo->prepare($sql);
 
-    // Execute the update query with the provided form data
     if ($stmt->execute([
         'name' => $name,
         'email' => $email,
@@ -54,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'id' => $user_id
     ])) {
         if ($is_admin) {
-            header('Location: admin_dashboard.php'); // Redirect to admin dashboard after update
+            header('Location: admin_dashboard.php');
         } else {
-            header('Location: home.php'); // Redirect to user's home page after update
+            header('Location: home.php');
         }
         exit;
     } else {

@@ -2,7 +2,7 @@
 if (!session_start()){
     session_start();
 }
-session_destroy(); // Destroy all session data
+session_destroy();
 header('Location: index.php'); // Redirect to the login page
 exit;
 ?>

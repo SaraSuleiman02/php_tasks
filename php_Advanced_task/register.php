@@ -22,30 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
         $error_message = "Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.";
     } else {
-        // Calculate age
-        $currentDate = new DateTime();
-        $birthDate = new DateTime($dob);
-        $age = $currentDate->diff($birthDate)->y;
+        // Concatenate the full name
+        $full_name = trim("$fname $mname $lname $family_name");
 
-        if ($age < 16) {
-            $error_message = "You must be at least 16 years old to register.";
-        } else {
-            // Concatenate the full name
-            $full_name = trim("$fname $mname $lname $family_name");
-
-            // Insert user into the database
-            $sql = "INSERT INTO users (name, email, password, mobile, date_of_birth) 
+        // Insert user into the database
+        $sql = "INSERT INTO users (name, email, password, mobile, date_of_birth) 
                     VALUES (:name, :email, :password, :mobile, :date_of_birth)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                'name' => $full_name,  // Store the full name in a single column
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_BCRYPT),
-                'mobile' => $mobile,
-                'date_of_birth' => $dob
-            ]);
-            $success_message = "Registration successful! Redirecting to login page...";
-        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            'name' => $full_name,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_BCRYPT),
+            'mobile' => $mobile,
+            'date_of_birth' => $dob
+        ]);
+        $success_message = "Registration successful! Redirecting to login page...";
     }
 }
 ?>
@@ -142,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 text: '<?php echo $success_message; ?>',
                 icon: 'success'
             }).then(function() {
-                window.location = 'login.php'; // Redirect on confirmation
+                window.location = 'login.php';
             });
         <?php endif; ?>
     </script>

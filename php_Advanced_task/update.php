@@ -2,34 +2,62 @@
 session_start();
 require 'config.php';
 
+// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
+// Check if the logged-in user is an admin
+$is_admin = isset($_SESSION['is_admin']);
+$user_id = $_SESSION['user_id']; // The logged-in user's ID
+
+// For admins, allow updating any user via the URL parameter 'id'
+if ($is_admin && isset($_GET['id'])) {
+    $user_id = $_GET['id']; // Admin wants to edit another user's info
+}
+
+// Fetch the user's data based on the ID (either the logged-in user or a selected user by the admin)
 $sql = "SELECT * FROM users WHERE id = :id";
 $stmt = $pdo->prepare($sql);
-$stmt->execute(['id' => $_SESSION['user_id']]);
+$stmt->execute(['id' => $user_id]);
 $user = $stmt->fetch();
 
+// If the user doesn't exist, redirect back to the appropriate page
+if (!$user) {
+    if ($is_admin) {
+        header('Location: admin_dashboard.php');
+    } else {
+        header('Location: home.php'); // For regular users
+    }
+    exit;
+}
+
+// Handle the form submission to update user info
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $mobile = $_POST['mobile'];
     $dob = $_POST['dob'];  // Date of birth as a single value (YYYY-MM-DD)
 
+    // Update user data
     $sql = "UPDATE users SET name = :name, email = :email, mobile = :mobile, date_of_birth = :date_of_birth 
             WHERE id = :id";
     $stmt = $pdo->prepare($sql);
 
+    // Execute the update query with the provided form data
     if ($stmt->execute([
         'name' => $name,
         'email' => $email,
         'mobile' => $mobile,
         'date_of_birth' => $dob,
-        'id' => $_SESSION['user_id']
+        'id' => $user_id
     ])) {
-        header('Location: home.php'); // Redirect to home after successful update
+        if ($is_admin) {
+            header('Location: admin_dashboard.php'); // Redirect to admin dashboard after update
+        } else {
+            header('Location: home.php'); // Redirect to user's home page after update
+        }
         exit;
     } else {
         echo "Error: Could not update information.";
@@ -55,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="signup-content">
                     <div class="signup-form">
                         <h2 class="form-title">Update Info</h2>
-                        <form method="POST" action="update.php" id="update-form">
+                        <form method="POST" action="update.php<?= $is_admin ? '?id=' . htmlspecialchars($user_id) : '' ?>" id="update-form">
                             <div class="form-group">
                                 <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                                 <input type="text" name="name" id="name" value="<?= htmlspecialchars($user['name']) ?>" required />

@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    // Fetch the user by email
     $sql = "SELECT * FROM users WHERE email = :email";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['email' => $email]);
@@ -16,6 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         session_start();
         $_SESSION['user_id'] = $user['id'];
+
+        // Update last_login timestamp in the database
+        $update_sql = "UPDATE users SET last_login = NOW() WHERE id = :id";
+        $update_stmt = $pdo->prepare($update_sql);
+        $update_stmt->execute(['id' => $user['id']]);
 
         // Check if the user is an admin or a regular user
         if ($user['role'] === 'admin') {
@@ -64,14 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
                             </div>
                         </form>
-                        <div class="social-login">
-                            <span class="social-label">Or login with</span>
-                            <ul class="socials">
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
-                            </ul>
-                        </div>
                     </div>
                     <div class="signin-image">
                         <figure><img src="images/signin-image.jpg" alt="sign in image"></figure>
@@ -84,18 +82,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="js/main.js"></script>
     <!-- Include SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        // Check for PHP error messages and display them
-        <?php if ($error_message): ?>
-            Swal.fire({
-                title: 'Error!',
-                text: '<?php echo $error_message; ?>',
-                icon: 'error'
-            });
-        <?php endif; ?>
-    </script>
-</body>
-
-</html>
+    <script src="https://cdn.jsdelivr.net/npm/s

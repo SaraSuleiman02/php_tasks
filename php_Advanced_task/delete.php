@@ -25,7 +25,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delete Account</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+        .delete-account h2 {
+            text-align: center;
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .form-buttons .btn {
+            width: 200px;
+            margin: 20px 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,16 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="container">
                 <h2>Are you sure you want to delete your account?</h2>
                 <form method="POST" action="delete.php">
-                    <div class="form-group form-button">
-                        <input type="submit" name="delete" id="delete" class="form-submit" value="Delete Account" />
+                    <div class="form-buttons">
+                        <input type="submit" name="delete" id="delete" class="btn btn-danger" value="Delete Account" />
+                        <a href="home.php" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
-                <a href="home.php" class="btn btn-secondary">Cancel</a>
             </div>
         </section>
     </div>
     <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

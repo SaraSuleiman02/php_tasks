@@ -18,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mobile = $_POST['mobile'];
     $dob = $_POST['dob'];
 
+    // Files
+    $profile_image = $_FILES['profile_image'];
+    $cv_file = $_FILES['cv_file'];
+
     // Password validation
     if ($password !== $password_confirm) {
         $error_message = "Passwords do not match.";
@@ -29,37 +33,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Handle image upload
         $target_dir = "uploads/"; // Directory to store images
+        $image_name = time() . '_' . basename($profile_image['name']); // unique name for the image
+        $target_image_file = $target_dir . $image_name;
+        $image_file_type = strtolower(pathinfo($target_image_file, PATHINFO_EXTENSION));
 
-        // Check if the file is uploaded and no errors occurred
-        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-            $profile_image = $_FILES['profile_image'];
-            $image_name = time() . '_' . basename($profile_image['name']); // unique name
-            $target_file = $target_dir . $image_name;
-            $image_file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Handle CV upload
+        $cv_name = time() . '_' . basename($cv_file['name']); // unique name for the CV
+        $target_cv_file = $target_dir . $cv_name;
+        $cv_file_type = strtolower(pathinfo($target_cv_file, PATHINFO_EXTENSION));
 
-            // Validate image type (jpg, png, gif)
-            $valid_image_types = ['jpg', 'jpeg', 'png', 'gif'];
-            if (!in_array($image_file_type, $valid_image_types)) {
-                $error_message = "Only JPG, JPEG, PNG, and GIF files are allowed.";
-            } elseif (move_uploaded_file($profile_image['tmp_name'], $target_file)) {
-                // Insert user into the database with image path
-                $sql = "INSERT INTO users (name, email, password, mobile, date_of_birth, profile_image) 
-                        VALUES (:name, :email, :password, :mobile, :date_of_birth, :profile_image)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    'name' => $full_name,
-                    'email' => $email,
-                    'password' => password_hash($password, PASSWORD_BCRYPT),
-                    'mobile' => $mobile,
-                    'date_of_birth' => $dob,
-                    'profile_image' => $image_name // Save the image file name
-                ]);
-                $success_message = "Registration successful! Redirecting to login page...";
-            } else {
-                $error_message = "There was an error uploading your file.";
-            }
+        // Validate image/cv type (jpg, png, gif)
+        $valid_image_types = ['jpg', 'jpeg', 'png', 'gif'];
+        $valid_cv_types = ['pdf', 'doc', 'docx']; 
+
+        if (!in_array($image_file_type, $valid_image_types)) {
+            $error_message = "Only JPG, JPEG, PNG, and GIF files are allowed for profile images.";
+        } elseif (!in_array($cv_file_type, $valid_cv_types)) {
+            $error_message = "Only PDF, DOC, and DOCX files are allowed for the CV.";
+        } elseif (move_uploaded_file($profile_image['tmp_name'], $target_image_file) && move_uploaded_file($cv_file['tmp_name'], $target_cv_file)) {
+            // Insert user into the database with image and CV paths
+            $sql = "INSERT INTO users (name, email, password, mobile, date_of_birth, profile_image, cv_file) 
+                    VALUES (:name, :email, :password, :mobile, :date_of_birth, :profile_image, :cv_file)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                'name' => $full_name,
+                'email' => $email,
+                'password' => password_hash($password, PASSWORD_BCRYPT),
+                'mobile' => $mobile,
+                'date_of_birth' => $dob,
+                'profile_image' => $image_name, // Save the image file name
+                'cv_file' => $cv_name // Save the CV file name
+            ]);
+            $success_message = "Registration successful! Redirecting to login page...";
         } else {
-            $error_message = "Please upload a valid profile image.";
+            $error_message = "There was an error uploading your files.";
         }
     }
 }
@@ -73,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="bootstrap.min.css">
     <!-- Include SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
@@ -125,6 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="form-group">
                                 <label for="profile_image"><i class="zmdi zmdi-camera"></i></label>
                                 <input type="file" name="profile_image" id="profile_image" accept="image/*" required />
+                                <span style="margin-left: 10px;">Profile Image (JPG, JPEG, PNG)</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="cv_file"><i class="zmdi zmdi-file"></i></label>
+                                <input type="file" name="cv_file" id="cv_file" accept=".pdf,.doc,.docx"/>
+                                <span style="margin-left: 10px;"> CV (PDF, DOC, DOCX)</span>
                             </div>
                             <div class="form-group form-button">
                                 <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
@@ -133,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="signup-image">
                         <figure><img src="images/signup-image.jpg" alt="sign up image"></figure>
-                        <a href="login.php" class="signup-image-link">I am already a member</a>
                     </div>
                 </div>
             </div>
@@ -150,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($error_message): ?>
             Swal.fire({
                 title: 'Error!',
-                text: '<?php echo $error_message; ?>',
+                text: '<?= htmlspecialchars($error_message); ?>',
                 icon: 'error'
             });
         <?php endif; ?>
@@ -158,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($success_message): ?>
             Swal.fire({
                 title: 'Success!',
-                text: '<?php echo $success_message; ?>',
+                text: '<?= htmlspecialchars($success_message); ?>',
                 icon: 'success'
             }).then(function() {
                 window.location = 'login.php';

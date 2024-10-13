@@ -51,9 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <div class="main">
+    <div>
         <section class="sign-in">
-            <div class="container">
+            <div class="container" style="margin-top: 40px;">
                 <div class="signin-content">
                     <div class="signin-form">
                         <h2 class="form-title">Login</h2>

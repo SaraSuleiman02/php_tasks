@@ -22,13 +22,18 @@ $users = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <style>
         h1 {
             margin-top: 30px;
             margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -40,6 +45,7 @@ $users = $stmt->fetchAll();
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Profile Image</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
@@ -52,6 +58,13 @@ $users = $stmt->fetchAll();
                 <?php foreach ($users as $user): ?>
                     <tr>
                         <th><?= htmlspecialchars($user['id']) ?></th>
+                        <td>
+                            <?php if (!empty($user['profile_image'])): ?>
+                                <img src="uploads/<?= htmlspecialchars($user['profile_image']) ?>" alt="Profile Image" class="profile-img">
+                            <?php else: ?>
+                                <img src="uploads/default.jpg" alt="Default Image" class="profile-img">
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($user['name']) ?></td>
                         <td><?= htmlspecialchars($user['email']) ?></td>
                         <td><?= htmlspecialchars($user['mobile']) ?></td>

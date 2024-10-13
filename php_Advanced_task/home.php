@@ -1,5 +1,5 @@
 <?php
-if (!session_start()){
+if (!session_start()) {
     session_start();
 }
 
@@ -48,6 +48,22 @@ $user = $stmt->fetch();
                 <tr>
                     <th>Date of Birth</th>
                     <td><?= htmlspecialchars($user['date_of_birth']) ?></td>
+                </tr>
+                <tr>
+                    <th>Profile Photo</th>
+                    <td><?php if (!empty($user['profile_image'])): ?>
+                            <img src="uploads/<?= htmlspecialchars($user['profile_image']) ?>" alt="Profile Image" class="profile-img" width="100px">
+                        <?php else: ?>
+                            <img src="uploads/default.jpg" alt="Default Image" class="profile-img">
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>CV</th>
+                    <td> <?php if (!empty($user['cv_file'])): ?>
+                            <a href="uploads/<?= htmlspecialchars($user['cv_file']) ?>" target="_blank"><?= htmlspecialchars($user['cv_file']) ?></a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             </table>
             <a href="update.php" class="btn btn-primary">Update</a>

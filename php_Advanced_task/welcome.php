@@ -34,8 +34,13 @@ $user = $stmt->fetch();
 <body>
     <div class="container text-center">
         <h1>Welcome, <?= htmlspecialchars($user['name']) ?>!</h1>
+        <?php if (!empty($user['profile_image'])): ?>
+            <img src="uploads/<?= htmlspecialchars($user['profile_image']) ?>" alt="Profile Image" class="profile-img">
+        <?php else: ?>
+            <img src="uploads/default.jpg" alt="Default Image" class="profile-img">
+        <?php endif; ?>
         <p>Your email: <?= htmlspecialchars($user['email']) ?></p>
-        
+
         <a href="home.php" class="btn btn-primary">Go to Dashboard</a>
         <a href="logout.php" class="btn btn-danger">Logout</a>
     </div>

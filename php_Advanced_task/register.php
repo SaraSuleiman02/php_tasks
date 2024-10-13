@@ -4,7 +4,7 @@ require 'config.php';
 $error_message = ""; // Initialize variable to store error messages
 $success_message = ""; // Initialize variable to store success messages
 
-$fname = $mname = $lname = $family_name = $email = $mobile = $dob = ""; // Initialize empty variables to retain values
+$fname = $mname = $lname = $family_name = $email = $mobile = $dob = ""; // vars for returning value
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve input fields
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="form-group">
                                 <label for="profile_image"><i class="zmdi zmdi-camera"></i></label>
-                                <input type="file" name="profile_image" id="profile_image" accept="image/*" required />
+                                <input type="file" name="profile_image" id="profile_image" accept="image/*"/>
                                 <span style="margin-left: 10px;">Profile Image (JPG, JPEG, PNG)</span>
                             </div>
                             <div class="form-group">

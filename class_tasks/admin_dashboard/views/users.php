@@ -1,7 +1,5 @@
-<!-- views/user.php -->
 <?php
 include '../includes/db.php';
-include '../includes/header.php';
 
 // Fetch all users
 $query = 'SELECT * FROM users';
@@ -9,7 +7,8 @@ $stmt = $pdo->prepare($query);
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<!-- <div class="d-flex"> -->
+<div class="d-flex">
+    <?php include '../includes/sidebar.php' ?>
     <div class="container mt-5" style="padding-bottom: 175px;">
         <h2>Manage Users</h2>
         <button class="btn btn-primary mb-3" id="createUserBtn">Add New User</button>
@@ -42,7 +41,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tbody>
         </table>
     </div>
-<!-- </div> -->
+</div>
 <!-- Modal Template for SweetAlert2 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

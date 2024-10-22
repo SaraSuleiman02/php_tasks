@@ -1,9 +1,5 @@
-<?php
-include '../includes/db.php';
-include '../includes/header.php';
-?>
+<?php include '../includes/db.php'; 
 
-<?php
 // Fetch all orders with user name, item description, item name, and item image
 $query = 'SELECT orders.order_id, users.user_name, item.item_description, 
           item.item_name, item.item_image FROM orders 
@@ -13,31 +9,32 @@ $stmt = $pdo->prepare($query);
 $stmt->execute();
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-<div class="container mt-5">
-    <h2>Orders Overview</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>User Name</th>
-                <th>Item Name</th>
-                <th>Item Image</th>
-                <th>Item Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($orders as $order): ?>
+<div class="d-flex">
+    <?php include '../includes/sidebar.php' ?>
+    <div class="content mt-5">
+        <h2 class="text-center">Orders Overview</h2>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td><?php echo $order['order_id']; ?></td>
-                    <td><?php echo $order['user_name']; ?></td>
-                    <td><?php echo $order['item_name']; ?></td>
-                    <td><img src="<?php echo $order['item_image']; ?>" alt="Item Image" style="width: 50px;"></td>
-                    <td><?php echo $order['item_description']; ?></td>
+                    <th>Order ID</th>
+                    <th>User Name</th>
+                    <th>Item Name</th>
+                    <th>Item Image</th>
+                    <th>Item Description</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $order): ?>
+                    <tr>
+                        <td><?php echo $order['order_id']; ?></td>
+                        <td><?php echo $order['user_name']; ?></td>
+                        <td><?php echo $order['item_name']; ?></td>
+                        <td><img src="<?php echo $order['item_image']; ?>" alt="Item Image" style="width: 50px;"></td>
+                        <td><?php echo $order['item_description']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
-
 <?php include("../includes/footer.php"); ?>
